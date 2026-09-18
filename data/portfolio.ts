@@ -22,6 +22,12 @@ export type ProjectItem = {
   description: string;
   highlights: string[];
   technologies: string[];
+  category?: string;
+  liveUrl?: string;
+  sourceUrl?: string;
+  repoUrl?: string;
+  image?: string;
+  assetKey?: string;
 };
 
 export type SkillGroup = {
@@ -178,6 +184,10 @@ export const portfolioContent: Record<Locale, LocaleContent> = {
         name: "Arkam",
         context: "Public data platform implemented by Idaraty in collaboration with L’INS",
         description: "A data platform designed to make socio-economic indicators easier to access for journalists, citizens, and decision-makers.",
+        category: "Public data",
+        liveUrl: "https://arkam.africa/",
+        sourceUrl: "https://arkam.africa/",
+        assetKey: "arkam",
         highlights: [
           "Collected and processed 3000+ datasets from 80+ public sources.",
           "Built automated data integration and transformation pipelines.",
@@ -189,45 +199,84 @@ export const portfolioContent: Record<Locale, LocaleContent> = {
         name: "Digital Administration Observatory",
         context: "Public sector performance evaluation",
         description: "Assessment of public website performance and digital maturity across Tunisian institutions.",
+        category: "Data analysis",
+        liveUrl: "https://idaraty.tn/fr/observatoire",
+        sourceUrl: "https://idaraty.tn/fr/observatoire",
         highlights: [
           "Analyzed more than 500 public websites and 100+ indicators.",
           "Produced analytical reports to support decision-making in public institutions.",
           "Contributed to improved digital service quality through structured evaluation and reporting.",
         ],
         technologies: ["Python", "CLI", "Data Analysis", "KPI Reporting"],
+        assetKey: "observatory",
       },
       {
         name: "Web Accessibility Evaluation",
         context: "Government accessibility mission",
         description: "Accessibility audits of public administration websites based on WCAG 2.1 standards.",
+        category: "Accessibility",
         highlights: [
           "Conducted accessibility audits for 4 government websites.",
           "Identified WCAG 2.1 compliance gaps and delivered technical recommendations.",
           "Helped improve the accessibility of public digital services.",
         ],
         technologies: ["Python", "Lighthouse CLI", "Accessibility Testing", "Reporting"],
+        assetKey: "webAccessibility",
       },
       {
         name: "Crowdfunding Platform with ETL Pipeline & Dashboard",
         context: "Final-year Business Intelligence project",
         description: "Built a crowdfunding platform and supporting ETL pipeline for campaign data analysis and performance tracking.",
+        category: "Business intelligence",
         highlights: [
           "Developed a crowdfunding platform using the MEAN stack.",
           "Designed a Talend ETL pipeline and modeled data for analytical processing.",
           "Built Power BI dashboards to monitor campaign outcomes and user behavior.",
         ],
         technologies: ["MEAN Stack", "Talend", "Power BI", "ETL"],
+        assetKey: "crowdfunding",
       },
       {
         name: "Semi-automated Web Accessibility Diagnostic Framework",
         context: "Final-year engineering project",
         description: "Framework for evaluating public website accessibility with automated data collection and reporting.",
+        category: "Automation",
         highlights: [
           "Reduced manual checks by 50–60%.",
           "Reduced reporting time by 70%.",
           "Created interactive dashboards and automated PDF reporting to support accessibility experts.",
         ],
         technologies: ["Python", "Streamlit", "JSON", "Data Modeling", "Dashboarding"],
+        assetKey: "accessibilityFramework",
+      },
+      {
+        name: "INAI Access to Information Reporting",
+        context: "Digital reporting and monitoring platform for Tunisia’s access-to-information framework",
+        description: "A public reporting experience for monitoring proactive publication, institutional commitments, contact references, action plans, and access-to-information statistics.",
+        category: "Public data",
+        liveUrl: "https://idaraty.tn/fr/rapports/inai-2020-2021#introduction",
+        sourceUrl: "https://idaraty.tn/fr/rapports/inai-2020-2021#introduction",
+        highlights: [
+          "Tracks the implementation of Tunisia’s organic law on access to information.",
+          "Structures monitoring and evaluation data for public institutions.",
+          "Provides a dashboard and periodic reporting context for the INAI framework.",
+        ],
+        technologies: ["Open data", "KPI", "Reporting", "Data analysis"],
+      },
+      {
+        name: "9anoun",
+        context: "Educational legal information platform",
+        description: "A public platform that makes Tunisian legal texts easier to discover and understand, with educational content and a podcast experience.",
+        category: "Information platform",
+        liveUrl: "https://9anoun.tn/fr?from=idaraty",
+        sourceUrl: "https://9anoun.tn/fr?from=idaraty",
+        highlights: [
+          "Organizes legal texts and related educational explanations.",
+          "Provides a French-language browsing experience for legal information.",
+          "Includes a podcast area focused on simplifying labour law.",
+        ],
+        technologies: ["Information architecture", "Search", "Content platform"],
+        assetKey: "nineanoun",
       },
     ],
     skillsTitle: "Skills",
@@ -344,6 +393,10 @@ export const portfolioContent: Record<Locale, LocaleContent> = {
         name: "Arkam",
         context: "Plateforme de données publiques mise en œuvre par Idaraty en collaboration avec l’INS",
         description: "Une plateforme de données destinée à rendre les indicateurs socio-économiques plus accessibles aux journalistes, citoyens et décideurs.",
+        category: "Données publiques",
+        liveUrl: "https://arkam.africa/",
+        sourceUrl: "https://arkam.africa/",
+        assetKey: "arkam",
         highlights: [
           "Collecte et traitement de plus de 3000 jeux de données issus de plus de 80 sources publiques.",
           "Mise en place de pipelines d’intégration et de transformation automatisés.",
@@ -355,45 +408,84 @@ export const portfolioContent: Record<Locale, LocaleContent> = {
         name: "Observatoire de l’Administration Digitale",
         context: "Évaluation de la performance du secteur public",
         description: "Analyse de la performance numérique et de la maturité digitale des institutions publiques tunisiennes.",
+        category: "Analyse de données",
+        liveUrl: "https://idaraty.tn/fr/observatoire",
+        sourceUrl: "https://idaraty.tn/fr/observatoire",
         highlights: [
           "Analyse de plus de 500 sites publics et de 100+ indicateurs.",
           "Production de rapports analytiques pour soutenir la prise de décision au sein des institutions publiques.",
           "Contribution à l’amélioration de la qualité des services numériques publics.",
         ],
         technologies: ["Python", "CLI", "Analyse de données", "KPI"],
+        assetKey: "observatory",
       },
       {
         name: "Évaluation de l’accessibilité web",
         context: "Mission gouvernementale d’accessibilité",
         description: "Audits d’accessibilité de sites administratifs selon les standards WCAG 2.1.",
+        category: "Accessibilité",
         highlights: [
           "Réalisation d’audits d’accessibilité pour 4 sites web administratifs.",
           "Identification des non-conformités WCAG 2.1 et recommandations techniques.",
           "Contribution à l’amélioration de l’accessibilité des services publics en ligne.",
         ],
         technologies: ["Python", "Lighthouse CLI", "Tests d’accessibilité", "Reporting"],
+        assetKey: "webAccessibility",
       },
       {
         name: "Plateforme de Crowdfunding avec Pipeline ETL et Dashboard",
         context: "Projet de fin d’études en Business Intelligence",
         description: "Développement d’une plateforme de financement participatif avec pipeline ETL pour l’analyse des performances des campagnes.",
+        category: "Business intelligence",
         highlights: [
           "Développement de la plateforme avec la stack MEAN.",
           "Conception d’un pipeline ETL Talend et modélisation des données.",
           "Création de tableaux de bord Power BI pour suivre les campagnes et le comportement des utilisateurs.",
         ],
         technologies: ["MEAN Stack", "Talend", "Power BI", "ETL"],
+        assetKey: "crowdfunding",
       },
       {
         name: "Framework semi-automatisé de diagnostic de l’accessibilité web",
         context: "Projet de fin d’études en ingénierie",
         description: "Framework d’évaluation de l’accessibilité des sites publics avec collecte automatisée et reporting structuré.",
+        category: "Automatisation",
         highlights: [
           "Réduction de 50 à 60 % des contrôles manuels.",
           "Réduction de 70 % du temps de production des rapports.",
           "Création de tableaux de bord interactifs et de rapports PDF automatisés pour les experts en accessibilité.",
         ],
         technologies: ["Python", "Streamlit", "JSON", "Modélisation de données", "Dashboards"],
+        assetKey: "accessibilityFramework",
+      },
+      {
+        name: "Rapport INAI — Accès à l’information",
+        context: "Plateforme de suivi et de reporting du cadre tunisien d’accès à l’information",
+        description: "Une expérience publique de reporting pour suivre la publication proactive, les engagements institutionnels, les références de contact, les plans d’action et les statistiques liées au droit d’accès à l’information.",
+        category: "Données publiques",
+        liveUrl: "https://idaraty.tn/fr/rapports/inai-2020-2021#introduction",
+        sourceUrl: "https://idaraty.tn/fr/rapports/inai-2020-2021#introduction",
+        highlights: [
+          "Suit la mise en œuvre de la loi organique tunisienne relative au droit d’accès à l’information.",
+          "Structure les données de suivi et d’évaluation des organismes publics.",
+          "Présente un contexte de tableau de bord et de rapports périodiques pour le cadre de l’INAI.",
+        ],
+        technologies: ["Open data", "KPI", "Reporting", "Analyse de données"],
+      },
+      {
+        name: "9anoun",
+        context: "Plateforme éducative d’information juridique",
+        description: "Une plateforme publique qui facilite la découverte et la compréhension des textes de loi tunisiens grâce à des contenus éducatifs et une expérience podcast.",
+        category: "Plateforme d’information",
+        liveUrl: "https://9anoun.tn/fr?from=idaraty",
+        sourceUrl: "https://9anoun.tn/fr?from=idaraty",
+        highlights: [
+          "Organise les textes juridiques et leurs explications pédagogiques.",
+          "Propose une expérience de consultation en français pour l’information juridique.",
+          "Comprend un espace podcast consacré à la simplification du droit du travail.",
+        ],
+        technologies: ["Architecture de l’information", "Recherche", "Plateforme de contenu"],
+        assetKey: "nineanoun",
       },
     ],
     skillsTitle: "Compétences",

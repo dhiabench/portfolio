@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   contactInfo,
   locales,
@@ -9,6 +9,7 @@ import {
   type Locale,
   type ProjectItem,
 } from "@/data/portfolio";
+import { projectAssets, type ProjectAssetCollection } from "@/data/project-assets";
 
 const navItems = [
   ["about", "01"],
@@ -41,64 +42,60 @@ function Tag({ children }: { children: React.ReactNode }) {
   return <span className="data-tag">{children}</span>;
 }
 
+function ExternalIcon() {
+  return <span aria-hidden="true">↗</span>;
+}
+
+function GithubIcon() {
+  return <span className="link-icon" aria-hidden="true">GH</span>;
+}
+
 function ProjectCaseStudy({
   project,
   index,
   labels,
+  assets,
+  language,
+  basePath,
+  onOpen,
 }: {
   project: ProjectItem;
   index: number;
-  labels: { context: string; approach: string; technology: string; result: string; open: string; close: string };
+  labels: { context: string; approach: string; technology: string; result: string; open: string; close: string; live: string; noLive: string; details: string };
+  assets?: ProjectAssetCollection;
+  language: Locale;
+  basePath: string;
+  onOpen: () => void;
 }) {
-  const [open, setOpen] = useState(false);
+  const hero = assets?.hero;
   return (
-    <article className={`case-study ${open ? "case-study-open" : ""}`}>
-      <button
-        type="button"
-        className="case-study-trigger"
-        aria-expanded={open}
-        onClick={() => setOpen((value) => !value)}
-      >
-        <span className="case-study-index">0{index + 1}</span>
-        <span className="case-study-name">{project.name}</span>
-        <span className="case-study-context">{project.context}</span>
-        <span className="case-study-toggle">{open ? "−" : "+"}</span>
-      </button>
-      <div className="case-study-preview">
-        <p>{project.description}</p>
-        <div className="case-study-tags">{project.technologies.slice(0, 4).map((tech) => <Tag key={tech}>{tech}</Tag>)}</div>
-      </div>
-      {open ? (
-        <div className="case-study-details">
-          <div>
-            <span className="micro-label">01</span>
-            <strong>{labels.context}</strong>
-            <p>{project.context}</p>
-          </div>
-          <div>
-            <span className="micro-label">02</span>
-            <strong>{labels.approach}</strong>
-            <ul>{project.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul>
-          </div>
-          <div>
-            <span className="micro-label">03</span>
-            <strong>{labels.technology}</strong>
-            <div className="case-study-tags">{project.technologies.map((tech) => <Tag key={tech}>{tech}</Tag>)}</div>
-          </div>
-          <div className="case-study-result">
-            <span className="micro-label">04</span>
-            <strong>{labels.result}</strong>
-            <p>{project.highlights[project.highlights.length - 1]}</p>
-          </div>
+    <article className="project-card">
+      <button type="button" className="project-card-main" onClick={onOpen} aria-label={`${labels.open}: ${project.name}`}>
+        <div className={`project-visual ${hero ? "has-image" : ""}`}>
+          {hero ? <Image src={`${basePath}${hero.src}`} alt={hero.alt[language]} fill sizes="(max-width: 700px) 100vw, 50vw" /> : null}
+          <div className="project-visual-grid" />
+          <span className="project-number">0{index + 1}</span>
+          <span className="project-category">{project.category ?? "Project"}</span>
+          <span className="project-open">{labels.details} <ExternalIcon /></span>
         </div>
-      ) : null}
-      <span className="sr-only">{open ? labels.close : labels.open}</span>
+        <div className="project-card-copy">
+          <h3>{project.name}</h3>
+          <p>{project.description}</p>
+          <div className="case-study-tags">{project.technologies.slice(0, 5).map((tech) => <Tag key={tech}>{tech}</Tag>)}</div>
+        </div>
+      </button>
+      <div className="project-card-links">
+        {project.repoUrl ? <a href={project.repoUrl} target="_blank" rel="noreferrer" aria-label={`View ${project.name} on GitHub`}><GithubIcon /> View on GitHub</a> : null}
+        {project.liveUrl ? <a href={project.liveUrl} target="_blank" rel="noreferrer" aria-label={`Open live project: ${project.name}`}>{labels.live} <ExternalIcon /></a> : <span className="no-live">{labels.noLive}</span>}
+      </div>
     </article>
   );
 }
 
 export function PortfolioPage() {
   const [language, setLanguage] = useState<Locale>("en");
+  const [projectFilter, setProjectFilter] = useState("all");
+  const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
   const content = portfolioContent[language];
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   const resumeHref = `${basePath}${language === "en" ? "/resume-en.pdf" : "/resume-fr.pdf"}`;
@@ -111,11 +108,16 @@ export function PortfolioPage() {
         portrait: "Portrait of Dhia Ben Cheikh",
         profileTitle: "A software and data professional",
         profileText: "I work where systems, information, and people meet: engineering reliable data flows, making patterns visible, and building interfaces that turn analysis into action.",
-        labels: { context: "Context", approach: "Approach & result", technology: "Technology", result: "What changed", open: "Expand case study", close: "Collapse case study" },
+        labels: { context: "Context", approach: "Approach & result", technology: "Technology", result: "What changed", open: "Open project details", close: "Close project details", live: "Live project", noLive: "No live demo listed", details: "DETAILS" },
         ecosystemTitle: "Technology ecosystem",
         ecosystemIntro: "A map of the tools and standards that recur across my work. The relationships matter more than a list of isolated skills.",
         projectCount: "selected projects",
         experienceLabel: "experience",
+        allProjects: "All",
+        liveProject: "Live project",
+        source: "Source page",
+        noLive: "No live demo listed",
+        closeDetails: "Close project details",
       }
     : {
         status: "SYSTEM.STATUS = DISPONIBLE",
@@ -124,12 +126,32 @@ export function PortfolioPage() {
         portrait: "Portrait de Dhia Ben Cheikh",
         profileTitle: "Un professionnel du logiciel et de la donnée",
         profileText: "Je travaille à l’intersection des systèmes, de l’information et des usages : construire des flux fiables, rendre les tendances lisibles et transformer l’analyse en action.",
-        labels: { context: "Contexte", approach: "Approche & résultat", technology: "Technologies", result: "Ce qui a changé", open: "Ouvrir l’étude de cas", close: "Fermer l’étude de cas" },
+        labels: { context: "Contexte", approach: "Approche & résultat", technology: "Technologies", result: "Ce qui a changé", open: "Ouvrir les détails du projet", close: "Fermer les détails du projet", live: "Projet en ligne", noLive: "Aucune démo en ligne indiquée", details: "DÉTAILS" },
         ecosystemTitle: "Écosystème technologique",
         ecosystemIntro: "Une cartographie des outils et standards qui reviennent dans mon travail. Les relations comptent davantage qu’une liste de compétences isolées.",
         projectCount: "projets sélectionnés",
         experienceLabel: "d’expérience",
+        allProjects: "Tous",
+        liveProject: "Projet en ligne",
+        source: "Page source",
+        noLive: "Aucune démo en ligne indiquée",
+        closeDetails: "Fermer les détails du projet",
       };
+
+  useEffect(() => {
+    if (!selectedProject) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelectedProject(null);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [selectedProject]);
+
+  const projectCategories = Array.from(new Set(content.projects.map((project) => project.category).filter(Boolean))) as string[];
+  const visibleProjects = projectFilter === "all"
+    ? content.projects
+    : content.projects.filter((project) => project.category === projectFilter);
+  const selectedAssets = selectedProject?.assetKey ? projectAssets[selectedProject.assetKey] : undefined;
 
   return (
     <div className="site-shell">
@@ -227,10 +249,50 @@ export function PortfolioPage() {
             <h2>{content.projectsTitle}<span>.</span></h2>
             <p>{language === "en" ? "Selected work, presented as systems and outcomes rather than job descriptions." : "Une sélection de réalisations présentées comme des systèmes et des résultats, pas comme des fiches de poste."}</p>
           </div>
-          <div className="case-study-list">
-            {content.projects.map((project, index) => <ProjectCaseStudy key={project.name} project={project} index={index} labels={copy.labels} />)}
+          <div className="project-filters" role="group" aria-label={language === "en" ? "Filter projects" : "Filtrer les projets"}>
+            <button type="button" className={projectFilter === "all" ? "active" : ""} onClick={() => setProjectFilter("all")}>{copy.allProjects}</button>
+            {projectCategories.map((category) => <button type="button" className={projectFilter === category ? "active" : ""} key={category} onClick={() => setProjectFilter(category)}>{category}</button>)}
+          </div>
+          <div className="project-grid">
+            {visibleProjects.map((project, index) => <ProjectCaseStudy key={project.name} project={project} index={index} labels={copy.labels} assets={project.assetKey ? projectAssets[project.assetKey] : undefined} language={language} basePath={basePath} onOpen={() => setSelectedProject(project)} />)}
           </div>
         </section>
+
+        {selectedProject ? (
+          <div className="project-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedProject(null); }}>
+            <article className="project-modal" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
+              <button type="button" className="project-modal-close" onClick={() => setSelectedProject(null)} aria-label={copy.closeDetails}>×</button>
+              <div className={`project-modal-visual ${selectedProject.image ? "has-image" : ""}`}>
+                {selectedAssets?.hero ? <Image src={`${basePath}${selectedAssets.hero.src}`} alt={selectedAssets.hero.alt[language]} fill sizes="(max-width: 800px) 100vw, 700px" /> : <div className="project-modal-data-visual"><span>DATA</span><i /><i /><i /><i /></div>}
+              </div>
+              <div className="project-modal-body">
+                <span className="micro-label">{selectedProject.category ?? "Project"}</span>
+                <h2 id="project-modal-title">{selectedProject.name}</h2>
+                <p className="project-modal-context">{selectedProject.context}</p>
+                <p className="project-modal-description">{selectedProject.description}</p>
+                <div className="project-modal-columns">
+                  <div><span className="micro-label">01</span><strong>{copy.labels.approach}</strong><ul>{selectedProject.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul></div>
+                  <div><span className="micro-label">02</span><strong>{copy.labels.technology}</strong><div className="case-study-tags">{selectedProject.technologies.map((tech) => <Tag key={tech}>{tech}</Tag>)}</div></div>
+                </div>
+                <div className="project-modal-actions">
+                  {selectedProject.repoUrl ? <a className="button button-primary" href={selectedProject.repoUrl} target="_blank" rel="noreferrer"><GithubIcon /> View on GitHub</a> : null}
+                  {selectedProject.liveUrl ? <a className="button button-quiet" href={selectedProject.liveUrl} target="_blank" rel="noreferrer">{copy.liveProject} <ExternalIcon /></a> : null}
+                  {selectedProject.sourceUrl && selectedProject.sourceUrl !== selectedProject.liveUrl ? <a className="button button-quiet" href={selectedProject.sourceUrl} target="_blank" rel="noreferrer">{copy.source} <ExternalIcon /></a> : null}
+                </div>
+                {selectedAssets?.gallery.length ? (
+                  <div className="project-gallery">
+                    {selectedAssets.gallery.map((asset) => (
+                      <figure key={asset.src}>
+                        <Image src={`${basePath}${asset.src}`} alt={asset.alt[language]} width={1200} height={700} loading="lazy" />
+                        {asset.caption ? <figcaption>{asset.caption[language]}</figcaption> : null}
+                      </figure>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            </article>
+          </div>
+        ) : null}
 
         <section id="data" className="editorial-section data-section">
           <SectionMarker number="04" label={language === "en" ? "Data perspective" : "Perspective data"} />
